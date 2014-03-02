@@ -4,32 +4,19 @@
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <meta charset="UTF-8">
   <title>Project 1</title>
-  <style>
-  svg { border: solid black 1px; }
-  .axis path { fill: none; stroke: black;}
-  .axis line {stroke :black;}
-  .areaMale { 
-    fill:#c0392b;
-  }
-  .areaFemale{
-    fill:#3498db;
-    opacity: .9;
-  }
-  .male{
-    fill:none;
-    stroke: #c0392b;
-  }
-  .female {
-    fill:none;
-    stroke:#3498db;
-  }
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+  <div id="title">
+    <h1>Cornell Engineering Students Enrollment</h1>
+    <h3>By Peter Blanco, Lily Gao, and Xinyi Wang</h3>
+    <h4>CS 3300 - Project 1 - March 2, 2014</h2>
+  </div>
+  
+
 
   <script>
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 40, left: 50},
     width = 480 - margin.left - margin.right,
     height = 250 - margin.top - margin.bottom;
 
@@ -47,7 +34,8 @@
     var header = div.append('h4').text(mjr.major);
     var svg = div.append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("height", height + margin.top + margin.bottom)
+      .attr("align", "center");
     
 
     //Convert objects to usable data
@@ -73,7 +61,7 @@
 
       //Axis
       var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-      var yAxis = d3.svg.axis().scale(yScale).orient("left");
+      var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(5);
 
       svg.append('g').call(yAxis)
         .attr('class', 'axis')
@@ -93,32 +81,16 @@
                 return "rotate(-65)" 
                 });
 
-      //Line & Area function
+      //Line function
       var line = d3.svg.line()
         .x(function (x, i){return xScale(dates[i]);})
         .y(function (y){return yScale(y);});
 
-      var area = d3.svg.area()
-        .x(function (x, i){return xScale(dates[i]);})
-        .y0(height)
-        .y1(function (y){return yScale(y);});
-
       //Append the lines for male and female data
-      svg.append("path")
-        .datum(maleData)
-        .attr("class", "areaMale")
-        .attr("d", area);
-      svg.append("path")
-        .datum(femaleData)
-        .attr("class", "areaFemale")
-        .attr("d", area); 
-
       svg.append('path').attr('d', line(maleData))
         .attr('class', 'male');
       svg.append('path').attr('d', line(femaleData))
         .attr('class', 'female');
-
-
 
       //Append circles for the lines
       svg.selectAll('circle1').data(maleData).enter().append('circle')
