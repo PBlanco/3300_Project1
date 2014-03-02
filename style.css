@@ -27,3 +27,15 @@ body {
     fill:none;
     stroke:#c0392b;
   }
+
+  #legend{
+    border:2px solid #a1a1a1;
+    padding:10px 40px; 
+    background:#dddddd;
+    width:150px;
+    margin: 0 auto;
+  }
+  #table_Legend{
+    margin: 0 auto;
+    text-align: left;
+  }
