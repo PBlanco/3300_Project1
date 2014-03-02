@@ -14,17 +14,16 @@ body {
   .axis path { fill: none; stroke: black;}
   .axis line {stroke :black;}
   .areaMale { 
-    fill:#c0392b;
+    fill:#3498db;
   }
   .areaFemale{
-    fill:#3498db;
-    opacity: .9;
+    fill:#c0392b;
   }
   .male{
     fill:none;
-    stroke: #c0392b;
+    stroke: #3498db;
   }
   .female {
     fill:none;
-    stroke:#3498db;
+    stroke:#c0392b;
   }
