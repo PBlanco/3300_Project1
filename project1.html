@@ -11,18 +11,13 @@
   </style>
 </head>
 <body>
-  <div id="canvas"></div>
 
   <script>
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 480 - margin.left - margin.right,
     height = 250 - margin.top - margin.bottom;
 
-  var svg = d3.select("#canvas").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
-
-
+  
   var yScale, xScale;
   var majors;
       
@@ -30,11 +25,24 @@
     majors = data;
     var mjr = majors[0];
 
+    //Set area up for svg
+    var div = d3.select("body").append('div');
+    var header = div.append('h4').text(mjr.major);
+    var svg = div.append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom);
+    
+
     //Convert objects to usable data
     var maleData = [];
     var femaleData = [];
     var dates = [];
-    mjr.count.forEach(function (m,i) {maleData[i] = m.male; femaleData[i]= m.female; dates[i] = (m.sem + " " + m.year);});
+
+    mjr.count.forEach(function (m,i) {
+      maleData[i] = m.male;
+      femaleData[i]= m.female;
+      dates[i] = (m.sem + " " + m.year);
+    });
     
 
     //Scales
@@ -45,10 +53,6 @@
     xScale = d3.scale.ordinal()
       .domain(dates)
       .rangePoints([margin.left, width]);
-
-    // xScale = d3.scale.linear()
-    //   .domain([0, mjr.count.length])
-    //   .range([margin.left, width]);
 
     //Axis
     var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
