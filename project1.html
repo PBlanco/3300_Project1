@@ -25,7 +25,7 @@
 
   var yScale, xScale;
   var majors;
-      var dates = [];
+      
   d3.json("majors.json", function (data) { 
     majors = data;
     var mjr = majors[0];
@@ -33,7 +33,7 @@
     //Convert objects to usable data
     var maleData = [];
     var femaleData = [];
-
+    var dates = [];
     mjr.count.forEach(function (m,i) {maleData[i] = m.male; femaleData[i]= m.female; dates[i] = (m.sem + " " + m.year);});
     
 
@@ -41,28 +41,40 @@
     yScale = d3.scale.linear()
       .domain([0, d3.max(mjr.count, function(s){ return Math.max(s.female, s.male); })])
       .range([height,margin.top]);
-      
-    xScale = d3.scale.linear()
-      .domain([0, mjr.count.length])
-      .range([margin.left, width]);
+
+    xScale = d3.scale.ordinal()
+      .domain(dates)
+      .rangePoints([margin.left, width]);
+
+    // xScale = d3.scale.linear()
+    //   .domain([0, mjr.count.length])
+    //   .range([margin.left, width]);
 
     //Axis
-    var xAxis = d3.svg.axis().scale(xScale).tickValues(dates).orient("bottom");
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-    svg.append('g').call(xAxis)
-      .attr('class', 'axis')
-      .attr("transform", "translate( 0 ," + (height + 5) + ")")
-      .call(xAxis);
 
     svg.append('g').call(yAxis)
       .attr('class', 'axis')
       .attr("transform", "translate( 50, 0)")
       .call(yAxis);
 
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .selectAll("text")  
+          .style("text-anchor", "end")
+          .style("font-size", "12")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", function(d) {
+              return "rotate(-65)" 
+              });
+
     //Line function
     var line = d3.svg.line()
-      .x(function (x, i){return xScale(i);})
+      .x(function (x, i){return xScale(dates[i]);})
       .y(function (y){return yScale(y);});
 
     //Append the lines for male and female data
@@ -76,13 +88,13 @@
 
     //Append circles for the lines
     svg.selectAll('circle1').data(maleData).enter().append('circle')
-      .attr('cx', function (d, i) {return xScale(i);})
+      .attr('cx', function (d, i) {return xScale(dates[i]);})
       .attr('cy', function (d) {return yScale(d);})
       .attr('r', 2)
       .attr('fill','red');
 
     svg.selectAll('circle2').data(femaleData).enter().append('circle')
-      .attr('cx', function (d, i) {return xScale(i);})
+      .attr('cx', function (d, i) {return xScale(dates[i]);})
       .attr('cy', function (d) {return yScale(d);})
       .attr('r', 2)
       .attr('fill','steelblue');
