@@ -6,8 +6,8 @@
   <title>Project 1</title>
   <style>
   svg { border: solid black 1px; }
-
-
+  .axis path { fill: none; stroke: black;}
+  .axis line {stroke :black;}
   </style>
 </head>
 <body>
@@ -25,31 +25,47 @@
 
   var yScale, xScale;
   var majors;
+      var dates = [];
   d3.json("majors.json", function (data) { 
     majors = data;
     var mjr = majors[0];
 
-    //TODO: x axis into dates
+    //Convert objects to usable data
+    var maleData = [];
+    var femaleData = [];
 
+    mjr.count.forEach(function (m,i) {maleData[i] = m.male; femaleData[i]= m.female; dates[i] = (m.sem + " " + m.year);});
+    
+
+    //Scales
     yScale = d3.scale.linear()
       .domain([0, d3.max(mjr.count, function(s){ return Math.max(s.female, s.male); })])
       .range([height,margin.top]);
+      
     xScale = d3.scale.linear()
       .domain([0, mjr.count.length])
       .range([margin.left, width]);
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+    //Axis
+    var xAxis = d3.svg.axis().scale(xScale).tickValues(dates).orient("bottom");
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
+    svg.append('g').call(xAxis)
+      .attr('class', 'axis')
+      .attr("transform", "translate( 0 ," + (height + 5) + ")")
+      .call(xAxis);
 
-    var maleData = [];
-    var femaleData = [];
-    mjr.count.forEach(function (m,i) {maleData[i] = m.male; femaleData[i]= m.female; });
-    
+    svg.append('g').call(yAxis)
+      .attr('class', 'axis')
+      .attr("transform", "translate( 50, 0)")
+      .call(yAxis);
 
+    //Line function
     var line = d3.svg.line()
       .x(function (x, i){return xScale(i);})
       .y(function (y){return yScale(y);});
 
+    //Append the lines for male and female data
     svg.append('path').attr('d', line(maleData))
       .attr('class', 'male')
       .style("fill","none").style("stroke", "red");
@@ -58,7 +74,7 @@
       .style("fill","none").style("stroke", "steelblue");
 
 
-
+    //Append circles for the lines
     svg.selectAll('circle1').data(maleData).enter().append('circle')
       .attr('cx', function (d, i) {return xScale(i);})
       .attr('cy', function (d) {return yScale(d);})
