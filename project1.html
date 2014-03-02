@@ -24,6 +24,34 @@
     width = 480 - margin.left - margin.right,
     height = 250 - margin.top - margin.bottom;
 
+  var majors;
+
+  d3.json("majors.json", function (data) { 
+    majors = data;
+    var mjr = majors[0];
+
+    //TODO: x axis into dates
+    var count = mjr.count.length;
+
+    var y0 = d3.max(mjr.count, function(s){
+                    return Math.max(s.female, s.male);
+                  });
+
+    var xScale = d3.scale.linear()
+                  .domain([0, count])
+                  .range([margin.left, width]);
+
+    var yScale = d3.scale.linear()
+                  .domain([0, d3.max(mjr.count, function(s){
+                    return Math.max(s.female, s.male);
+                  })])
+                  .range([height, margin.top]);
+
+  });
+
+  
+
+
   </script>
 
 
