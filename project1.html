@@ -12,41 +12,58 @@
   stroke: #000;
   shape-rendering: crispEdges;
   }
-  .area {
-    fill: steelblue;
-  }
+  
+  .bar.male {
+  fill: steelblue;
+}
   </style>
 </head>
 <body>
+  <div id="canvas"></div>
 
   <script>
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 480 - margin.left - margin.right,
     height = 250 - margin.top - margin.bottom;
 
+  var svg = d3.select("#canvas").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
   var majors;
-
   d3.json("majors.json", function (data) { 
     majors = data;
     var mjr = majors[0];
 
     //TODO: x axis into dates
-    var count = mjr.count.length;
-
-    var y0 = d3.max(mjr.count, function(s){
-                    return Math.max(s.female, s.male);
-                  });
-
-    var xScale = d3.scale.linear()
-                  .domain([0, count])
-                  .range([margin.left, width]);
+    var y0 = d3.max(mjr.count, function(s){ return Math.max(s.female, s.male); });
 
     var yScale = d3.scale.linear()
-                  .domain([0, d3.max(mjr.count, function(s){
-                    return Math.max(s.female, s.male);
-                  })])
-                  .range([height, margin.top]);
+    .domain([-y0, y0])
+    .range([height,margin.top])
+    .nice();
 
+
+    var xScale = d3.scale.ordinal()
+      .domain(d3.range(mjr.count.length))
+      .rangeRoundBands([0, width], .2);
+
+    var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+
+    svg.selectAll(".bar")
+      .data(mjr.count)
+      .enter().append("rect")
+      .attr("class", "bar male")
+      .attr("y", function(d){return yScale(500);})
+      .attr("x", function(d, i) { return xScale(i); })
+      .attr("height", function(d) { return yScale(d.male); })
+      .attr("width", xScale.rangeBand());
+
+    
   });
 
   
