@@ -8,6 +8,22 @@
   svg { border: solid black 1px; }
   .axis path { fill: none; stroke: black;}
   .axis line {stroke :black;}
+  .areaMale { 
+    fill:#c0392b;
+  }
+  .areaFemale{
+    fill:#3498db;
+    opacity: .9;
+  }
+  .male{
+    fill:none;
+    stroke: #c0392b;
+  }
+  .female {
+    fill:none;
+    stroke:#3498db;
+  }
+
   </style>
 </head>
 <body>
@@ -77,18 +93,31 @@
                 return "rotate(-65)" 
                 });
 
-      //Line function
+      //Line & Area function
       var line = d3.svg.line()
         .x(function (x, i){return xScale(dates[i]);})
         .y(function (y){return yScale(y);});
 
+      var area = d3.svg.area()
+        .x(function (x, i){return xScale(dates[i]);})
+        .y0(height)
+        .y1(function (y){return yScale(y);});
+
       //Append the lines for male and female data
+      svg.append("path")
+        .datum(maleData)
+        .attr("class", "areaMale")
+        .attr("d", area);
+      svg.append("path")
+        .datum(femaleData)
+        .attr("class", "areaFemale")
+        .attr("d", area); 
+
       svg.append('path').attr('d', line(maleData))
-        .attr('class', 'male')
-        .style("fill","none").style("stroke", "red");
+        .attr('class', 'male');
       svg.append('path').attr('d', line(femaleData))
-        .attr('class', 'female')
-        .style("fill","none").style("stroke", "steelblue");
+        .attr('class', 'female');
+
 
 
       //Append circles for the lines
@@ -96,13 +125,18 @@
         .attr('cx', function (d, i) {return xScale(dates[i]);})
         .attr('cy', function (d) {return yScale(d);})
         .attr('r', 2)
-        .attr('fill','red');
+        .attr('fill','#c0392b');
 
       svg.selectAll('circle2').data(femaleData).enter().append('circle')
         .attr('cx', function (d, i) {return xScale(dates[i]);})
         .attr('cy', function (d) {return yScale(d);})
         .attr('r', 2)
-        .attr('fill','steelblue');
+        .attr('fill','#3498db');
+
+        
+
+
+
     });
   });
 
